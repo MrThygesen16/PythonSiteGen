@@ -1,3 +1,3 @@
-# Thyegsen Dev Site
+# Thygesen Dev Site
 
 This is the repo for git-hosted website.
