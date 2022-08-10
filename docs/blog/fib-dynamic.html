@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<html>
+    <head>
+        
+        <link rel="stylesheet" href="../style.css">
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="My article">
+        <meta name="author" content="Mike">
+      
+    </head>
+
+    <body>
+
+        <div class="content"> 
+            <hr>
+
+            <ul class="nav">
+                <li> <a href="../../index.html">Home</a> </li>
+                <li> <a href="../about.html">About</a> </li>
+                <li><a href="../blog.html">Blog</a></li>
+                <li><a href="../projects.html">Projects</a></li>
+              </ul>
+    
+            <hr>
+    
+            <!-- <div> <h1>  </h1>  </div> -->
+    
+            <!-- <hr> -->
+
+            <div class="text"> <h1>Dynamic Programming: Fibonacci Sequence</h1>
+
+<hr />
+
+<h2>Background</h2>
+
+<blockquote>
+  <p>The Fibonnaci Sequence is a series of numbers in which each number ( Fibonacci number ) is the sum of the two preceding numbers. The simplest is the series 1, 1, 2, 3, 5, 8, etc.</p>
+</blockquote>
+
+<h2>Recursive Approach</h2>
+
+<p>Using the above defintion we can define a recursive formula for generating numbers in the fibonacci sequence as follows:</p>
+
+<pre><code>fib (n) = fib(n-1) + fib(n-2) 
+</code></pre>
+
+<p>The resulting function in a program might look like:</p>
+
+<pre><code>def fib(n: int) -&gt; int {
+
+    match n {
+        1       =&gt; 0,
+        2 | 3   =&gt; 1,
+        _       =&gt; { return fib(n-1) + fib(n-2); }, 
+    }
+}
+</code></pre>
+
+<p><em>Note: I've chosen to implement this in a Rust/Scala like fashion. Structural pattern matching is just too good. I will definitely be doing a writeup on it in the future.</em> </p>
+
+<p>For reference, the first 15 Fibonacci numbers are:</p>
+
+<pre><code>1   2   3   4   5   6   7   8   9   10  11  12  13   14   15
+0   1   1   2   3   5   8   13  21  34  55  89  144  233  377
+</code></pre>
+
+<p>Unfortunately, calculating numbers in the fibonacci sequence using the function or formula above extremely inefficient. The time complexity of this algorithm (in terms of worst case) is <code>O(2^n)</code>. </p>
+
+<p>To put that in perspective, calcuating the <code>50th</code> fibonacci number in the sequence would take:</p>
+
+<pre><code>2 ^ 42 = 4398046511104 units of time 
+
+(if the unit is milliseconds, it would take 50903 days!)
+</code></pre>
+
+<p>The reason for this extremely large cost is due to recalculating values we have already seen.</p>
+
+<p>As a tree, finding the 5th number of the sequence would look like the following:</p>
+
+<pre><code>                                           f(5)
+                                      /           \
+                                    f(4)          f(3)
+                                  /     \         / \
+                                f(3)    f(2)   f(2)  1
+                                / \     / \     / \
+                              f(2) 1   1   0   1   0
+                              / \
+                             1   0
+</code></pre>
+
+<p>To calcuate the <code>5th</code> fibonacci number we are recaclulating:</p>
+
+<pre><code>f(3) -&gt; 2 times
+f(2) -&gt; 3 times
+</code></pre>
+
+<h2>Tabulation Approach</h2>
+
+<p>As the name would suggest, tabulation relies heavily on understanding arrays.</p>
+
+<p>The following snippet of code takes an array of length <code>2</code> and a target <code>n</code> (in this case our target is 15). The total complexity for this approach is <code>O(n)</code>. Since all we are doing is iterating through a loop from <code>2</code> to <code>n</code>, hence a linear time complexity.</p>
+
+<pre><code>Long[] fibList = {(long) 0 , (long) 1};
+
+int target = 15;
+
+System.out.println("1: 0 \n2: 1");
+
+// this is known as tabulation:
+// aka bottom-up
+for (int i = 2; i &lt; target; i++){
+
+    long temp = fibList[0] + fibList[1];
+    System.out.println((i+1) + ": " + temp);
+
+    fibList[0] = fibList[1];
+    fibList[1] = temp;
+}
+
+ System.out.println("=== Target Found ===");
+</code></pre>
+
+<p>The array is initialized to the first and second numbers of the sequence <code>{0,1}</code>. From here we calculate the value of the next number of the sequence by adding the previous two numbers together. Not only is this highly-efficient in terms of time complexity when compared to the naive approach above, it is also extremely efficient in terms of memory usage. One of the issue with the recursive approach is that for each recursive call we are pushing a frame onto the stack. For a large enough value of <code>n</code>, this may cause a stack overflow error. In which case the program will crash.</p>
+
+<p>For <code>target = 15</code>, the output of the program displays:</p>
+
+<pre><code>1: 0
+2: 1
+3: 1
+4: 2
+5: 3
+6: 5
+7: 8
+8: 13
+9: 21
+10: 34
+11: 55
+12: 89
+13: 144
+14: 233
+15: 377
+=== Target Found ===
+</code></pre>
+
+<p>If we refer to the sequence provided above, we can verify that this result is correct.  </p>
+
+<pre><code>                                           5   [t]
+                                         /      ^     
+                                        3       |       
+                                       /        |     
+                                      2         |     
+                                     /          | 
+                                    1           |
+                                   /            |
+                                  1             |
+                                 /          Start with
+                                0             1 &amp; 0
+                                            And work up
+</code></pre>
+
+<p>This is what is known as a "bottom-up" approach. Rather than trying to start at the target index and work our way down to our base cases <code>{0,1}</code>, we instead start at these cases and work our way to our target index. </p>
+ </div> 
+            
+        </div>
+
+    </body>
+</html>
