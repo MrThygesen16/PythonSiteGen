@@ -68,7 +68,8 @@
 0   1   1   2   3   5   8   13  21  34  55  89  144  233  377
 </code></pre>
 
-<p>Unfortunately, calculating numbers in the fibonacci sequence using the function or formula above extremely inefficient. The time complexity of this algorithm (in terms of worst case) is <code>O(2^n)</code>. </p>
+<p>Unfortunately, calculating numbers in the fibonacci sequence using the function or formula above is extremely inefficient. 
+  The time complexity of this algorithm (in terms of worst case) is <code>O(2^n)</code>. </p>
 
 <p>To put that in perspective, calcuating the <code>50th</code> fibonacci number in the sequence would take:</p>
 
@@ -85,9 +86,9 @@
                                       /           \
                                     f(4)          f(3)
                                   /     \         / \
-                                f(3)    f(2)   f(2)  1
+                                f(3)    f(2)   f(2)  0
                                 / \     / \     / \
-                              f(2) 1   1   0   1   0
+                              f(2) 0   1   0   1   0
                               / \
                              1   0
 </code></pre>
