@@ -82,15 +82,16 @@
 
 <p>As a tree, finding the 5th number of the sequence would look like the following:</p>
 
-<pre><code>                                           f(5)
-                                      /           \
-                                    f(4)          f(3)
-                                  /     \         / \
-                                f(3)    f(2)   f(2)  0
-                                / \     / \     / \
-                              f(2) 0   1   0   1   0
-                              / \
-                             1   0
+<pre><code>
+                                            f(5)
+                                      /             \
+                                    f(4)            f(3)
+                                   /    \          /    \
+                                f(3)    f(2)     f(2)   f(1)
+                                /  \       \     /         \
+                             f(2)  f(1)     1   1           0
+                              /       \
+                             1         0
 </code></pre>
 
 <p>To calcuate the <code>5th</code> fibonacci number we are recaclulating:</p>
