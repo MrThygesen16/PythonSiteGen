@@ -5,7 +5,7 @@ h1 {
 }
 
 body .text {
-    font-size: 17px;
+    font-size: 1.25vw;
     text-align: justify;
     text-justify: inter-word;
 
@@ -13,9 +13,9 @@ body .text {
 
 body {
     background-color: darkslategray;
-    width: 1000px;
-    margin: 0 auto;
-    border: 10px solid #999;
+    width: 85vw;
+    margin: 0vw auto;
+    border: 0.5vw solid #999;
 
     /* padding: 10px 10px; */
 }
@@ -23,7 +23,7 @@ body {
 
 body .content {
     background: white;
-    padding: 10px 15px;
+    padding: 1vw 5vh;
 }
 
 
@@ -44,8 +44,8 @@ blockquote code {
 blockquote {
     color: darkslateblue;
     font-style: italic;
-    border: 0.5px dotted #999;
-    padding: 5px 15px;
+    border: 0.15vw dotted #999;
+    padding: 1vw 2vw;
 }
 
 pre code {
@@ -54,9 +54,9 @@ pre code {
     margin-left: auto;
     margin-right: auto;
     background-color: #eee;
-    border: 1px solid #999;
+    border: .25vw solid #999;
     display: block;
-    padding: 5px 5px;
+    padding: 1vw 1vw;
   }
 
   
@@ -69,20 +69,20 @@ ul.nav {
     margin:0;
     padding:0;
     list-style:none;
-    height:36px; line-height:36px;
+    height:2vw; line-height:2vw;
     background: darkgray; /* you can change the backgorund color here. */
     font-family:Arial, Helvetica, sans-serif;
-    font-size:24px;
+    font-size:1.5vw;
 }
 
 ul.nav li {
-    border-right:1px solid black; /* you can change the border color matching to your background color */
+    border-right:0.05vw solid black; /* you can change the border color matching to your background color */
     float:left;
 }
 
 ul.nav a {
     display:block;
-    padding:0 28px;
+    padding:0vw 1vw;
     color:white;
     text-decoration:none;
 }
@@ -99,35 +99,34 @@ li a.active {
 
 
 
-
 ul.blog {
     list-style:none;
     writing-mode: horizontal-tb;
-    padding: 0px 25px;
+    padding: 0vw 0.0vw;
     /* border: 0.25px solid black; */
 }
 
 
 ul.blog li:not(:last-child) {
-    margin-bottom: 15px;  
+    margin-bottom: 1.5vh;  
 }
 
 ul.blog li {
-    border:1px solid black;
+    border:0.1vw solid black;
     float:none;
-    padding: 15px 25px;
+    padding: 1vw 1vw;
     /* margin-bottom: -15px;   */
-    font-size: 15px;
+    font-size: 1vw;
 }
 
 
 
 ul.blog a {
     display:block;
-    padding:0px 0px;
+    padding:0vw 0vw;
     color:black;
     text-decoration:none;
-    font-size:24px;
+    font-size:1.5vw;
 }
 
 ul.blog a:hover,
