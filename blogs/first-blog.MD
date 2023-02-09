@@ -7,7 +7,7 @@ For my first blog post it seemed fitting to pay homage to almost everyone's firs
 
 
 ## C
-```
+```c
 #include <stdio.h>
 
 int main() {
@@ -23,7 +23,7 @@ __________
 
 
 ## Java
-```
+```java
 class HelloWorld {
 
     public static void main(String[] args) {
@@ -37,13 +37,13 @@ class HelloWorld {
 _________
 
 ## Python
-```
+```python
 print("Hello, World!")
 ```
 
 Or we can define a `main` entry point for our python program:
 
-```
+```python
 if __name__ == '__main__':
 
     print("Hello, World!")
@@ -53,7 +53,7 @@ if __name__ == '__main__':
 _______
 
 ## Scala
-```
+```scala
 object Hello {
 
     def main(args: Array[String]) = {
@@ -67,7 +67,7 @@ object Hello {
 _______
 
 ## Rust
-```
+```rust
 fn main() {
 
     println!("Hello World!");

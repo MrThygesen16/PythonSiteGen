@@ -10,7 +10,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta name="description" content="My article">
         <meta name="author" content="Mike">
-        <link rel="icon" href="../../icon.png">      
+        <link rel="icon" href="../../icon.png">
+      
     </head>
 
     <body>
@@ -45,20 +46,20 @@
 
 <p>Using the above defintion we can define a recursive formula for generating numbers in the fibonacci sequence as follows:</p>
 
-<pre><code>fib (n) = fib(n-1) + fib(n-2) 
-</code></pre>
+<div class="codehilite"><pre><span></span><code><span class="n">fib</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fib</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">fib</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span>
+</code></pre></div>
 
 <p>The resulting function in a program might look like:</p>
 
-<pre><code>def fib(n: int) -&gt; int {
+<div class="codehilite"><pre><span></span><code><span class="n">def</span><span class="w"> </span><span class="n">fib</span><span class="p">(</span><span class="n">n</span>: <span class="nc">int</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">int</span><span class="w"> </span><span class="p">{</span>
 
-    match n {
-        1       =&gt; 0,
-        2 | 3   =&gt; 1,
-        _       =&gt; { return fib(n-1) + fib(n-2); }, 
-    }
-}
-</code></pre>
+<span class="w">    </span><span class="k">match</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="mi">1</span><span class="w">       </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">        </span><span class="mi">2</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">3</span><span class="w">   </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">        </span><span class="n">_</span><span class="w">       </span><span class="o">=&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">fib</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">fib</span><span class="p">(</span><span class="n">n</span><span class="o">-</span><span class="mi">2</span><span class="p">);</span><span class="w"> </span><span class="p">},</span><span class="w"> </span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
 
 <p><em>Note: I've chosen to implement this in a Rust/Scala like fashion. Structural pattern matching is just too good. I will definitely be doing a writeup on it in the future.</em> </p>
 
@@ -68,30 +69,28 @@
 0   1   1   2   3   5   8   13  21  34  55  89  144  233  377
 </code></pre>
 
-<p>Unfortunately, calculating numbers in the fibonacci sequence using the function or formula above is extremely inefficient. 
-  The time complexity of this algorithm (in terms of worst case) is <code>O(2^n)</code>. </p>
+<p>Unfortunately, calculating numbers in the fibonacci sequence using the function or formula above extremely inefficient. The time complexity of this algorithm (in terms of worst case) is <code>O(2^n)</code>. </p>
 
 <p>To put that in perspective, calcuating the <code>50th</code> fibonacci number in the sequence would take:</p>
 
 <pre><code>2 ^ 42 = 4398046511104 units of time 
 
-(if the unit is milliseconds, it would take 50,903 days!)
+(if the unit is milliseconds, it would take 50903 days!)
 </code></pre>
 
 <p>The reason for this extremely large cost is due to recalculating values we have already seen.</p>
 
 <p>As a tree, finding the 5th number of the sequence would look like the following:</p>
 
-<pre><code>
-                                            f(5)
-                                      /             \
-                                    f(4)            f(3)
-                                   /    \          /    \
-                                f(3)    f(2)     f(2)   f(1)
-                                /  \       \     /         \
-                             f(2)  f(1)     1   1           0
-                              /       \
-                             1         0
+<pre><code>                                           f(5)
+                                      /           \
+                                    f(4)          f(3)
+                                  /     \         / \
+                                f(3)    f(2)   f(2)  1
+                                / \     / \     / \
+                              f(2) 1   1   0   1   0
+                              / \
+                             1   0
 </code></pre>
 
 <p>To calcuate the <code>5th</code> fibonacci number we are recaclulating:</p>
@@ -106,25 +105,25 @@ f(2) -&gt; 3 times
 
 <p>The following snippet of code takes an array of length <code>2</code> and a target <code>n</code> (in this case our target is 15). The total complexity for this approach is <code>O(n)</code>. Since all we are doing is iterating through a loop from <code>2</code> to <code>n</code>, hence a linear time complexity.</p>
 
-<pre><code>Long[] fibList = {(long) 0 , (long) 1};
+<div class="codehilite"><pre><span></span><code><span class="n">Long</span><span class="o">[]</span><span class="w"> </span><span class="n">fibList</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{(</span><span class="kt">long</span><span class="p">)</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="kt">long</span><span class="p">)</span><span class="w"> </span><span class="mi">1</span><span class="p">};</span>
 
-int target = 15;
+<span class="kt">int</span><span class="w"> </span><span class="n">target</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">15</span><span class="p">;</span>
 
-System.out.println("1: 0 \n2: 1");
+<span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;1: 0 \n2: 1&quot;</span><span class="p">);</span>
 
-// this is known as tabulation:
-// aka bottom-up
-for (int i = 2; i &lt; target; i++){
+<span class="c1">// this is known as tabulation:</span>
+<span class="c1">// aka bottom-up</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">target</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
 
-    long temp = fibList[0] + fibList[1];
-    System.out.println((i+1) + ": " + temp);
+<span class="w">    </span><span class="kt">long</span><span class="w"> </span><span class="n">temp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fibList</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">fibList</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="p">;</span>
+<span class="w">    </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">((</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">temp</span><span class="p">);</span>
 
-    fibList[0] = fibList[1];
-    fibList[1] = temp;
-}
+<span class="w">    </span><span class="n">fibList</span><span class="o">[</span><span class="mi">0</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fibList</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="p">;</span>
+<span class="w">    </span><span class="n">fibList</span><span class="o">[</span><span class="mi">1</span><span class="o">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">temp</span><span class="p">;</span>
+<span class="p">}</span>
 
- System.out.println("=== Target Found ===");
-</code></pre>
+<span class="w"> </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;=== Target Found ===&quot;</span><span class="p">);</span>
+</code></pre></div>
 
 <p>The array is initialized to the first and second numbers of the sequence <code>{0,1}</code>. From here we calculate the value of the next number of the sequence by adding the previous two numbers together. Not only is this highly-efficient in terms of time complexity when compared to the naive approach above, it is also extremely efficient in terms of memory usage. One of the issue with the recursive approach is that for each recursive call we are pushing a frame onto the stack. For a large enough value of <code>n</code>, this may cause a stack overflow error. In which case the program will crash.</p>
 
@@ -150,16 +149,17 @@ for (int i = 2; i &lt; target; i++){
 
 <p>If we refer to the sequence provided above, we can verify that this result is correct.  </p>
 
-<pre><code>              
-                          5             3      [t]       
-                                       /        ^     
-                          4           2         |     
+<pre><code>                                           5   [t]
+                                         /      ^     
+                                        3       |       
+                                       /        |     
+                                      2         |     
                                      /          | 
-                          3         1           |
+                                    1           |
                                    /            |
-                          2       1             |
+                                  1             |
                                  /          Start with
-                          1     0             1 &amp; 0
+                                0             1 &amp; 0
                                             And work up
 </code></pre>
 

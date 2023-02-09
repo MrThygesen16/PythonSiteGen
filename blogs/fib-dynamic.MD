@@ -13,12 +13,12 @@ ______
 Using the above defintion we can define a recursive formula for generating numbers in the fibonacci sequence as follows:
 
 
-``` 
+```rust 
 fib (n) = fib(n-1) + fib(n-2) 
 ```
 
 The resulting function in a program might look like:
-```
+```rust
 def fib(n: int) -> int {
 
 	match n {
@@ -68,8 +68,6 @@ To calcuate the `5th` fibonacci number we are recaclulating:
 f(3) -> 2 times
 f(2) -> 3 times
 ```
-
-
 
 
 ## Tabulation Approach
