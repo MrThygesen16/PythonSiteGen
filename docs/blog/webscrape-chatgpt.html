@@ -153,6 +153,17 @@ Go into the preview section:</li>
 
 <h4>Response</h4>
 
+<pre><code>You can view the authorization token for a website you're visiting in the developer tools of your web browser. Here's how you can do this in Google Chrome:
+
+1.  Right-click on the page and select "Inspect"
+2.  In the developer tools window that opens, switch to the "Network" tab
+3.  Refresh the page you're visiting
+4.  Look for the API request you're interested in, and click on it to view its details
+5.  Switch to the "Headers" tab, and look for the "Authorization" header
+
+Note that some websites may encode the token, and it may not be immediately readable in its raw form. Additionally, not all websites will include the authorization token in the request header, as it may be stored elsewhere or passed as part of the URL or as a cookie.
+</code></pre>
+
 <p>To my surprise, this worked exactly how I wanted it to. I was able to see the field <code>x-authorization</code> with no issues.</p>
 
 <p>This was my first little 'win' with ChatGPT.</p>
