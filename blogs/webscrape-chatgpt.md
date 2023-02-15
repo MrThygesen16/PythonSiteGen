@@ -5,37 +5,30 @@ ______
 ## First Attempt(s)
 
 1. Tried to use more traditional web-scraping methods (e.g. Selenium etc.) --> realised this was an issue as the website required you to scroll to load more data on attendees (infinite scroll)
-2. Thought about using OpenCV to take screenshots and parse; did this is a previous project; however the scrolling issue stoppped me dead in my tracks
+2. Thought about using OpenCV to take screenshots and parse; I did this in a previous project; however, the scrolling issue stopped me dead in my tracks
 
-After enough googling/inspecting elements etc. figured out that the website was calling an API each time I scrolled down, and that's how more poeple were being loaded in.. About 20 per page. 
+After enough googling/inspecting elements etc. figured out that the website was calling an API each time I scrolled down, and that's how more people were being loaded in... About 20 per page. 
 
-As it turns out there were roughly 175 page. Doing a bit of basic maths we get:
+As it turns out there were roughly 175 pages. Doing a bit of basic maths we get:
 ```
 175 * 20 = 3500
 ```
 
-So all in all, there is about ~3,500 on this list alone. It would take tens, if not hundreds of hours to scroll through each page. and collect this info. What a waste of time that would be...
+So all in all, there are about ~3,500 on this list alone. It would take tens, if not hundreds of hours to scroll through each page. and collect this info. What a waste of time that would be...
 
 > Never spend 6 minutes doing something by hand when you can spend 6 hours failing to automate it
 
 
 ### Steps:
 - Go into inspect (on chrome)
-- Network tab
+- Network Tab
 - Scroll down/click load more
 - Click the second request:
 ```
 https://api-prod.grip.events/1/container/5062/search?search=&sort=name&order=asc&type_id=5716,5718,5714,5717&page=2
 ```
 - Look at the general headers:
-```
-Request URL: https://api-prod.grip.events/1/container/5062/search?search=&sort=name&order=asc&type_id=5716,5718,5714,5717&page=2
-Request Method: GET
-Status Code: 200 
-Remote Address: 54.73.94.200:443
-Referrer Policy: no-referrer-when-downgrade
-```
--  Go into preview section:
+Go into the preview section:
 ```js
 {success: true, } data: [
     {id: 7311283, application_id: 743, name: "Abbi Failla", first_name: "Abbi", last_name: "Failla",},
@@ -62,7 +55,7 @@ Referrer Policy: no-referrer-when-downgrade
 
 Perfect, we found what we were looking for! This is one request of many. 
 
-I (naively) tried entering in this API url into my webrowser, only to be greeted with the message:
+I (naively) tried entering this API URL into my web browser, only to be greeted with the message:
 ```js
 {"error":"missing authorization header"}
 ```
@@ -77,7 +70,7 @@ ___
 
 ## ChatGPT
 
-I've never used ChatGPT prior to this, so I was keen to see its capabilities first-hand. I decided to jump straight into it, and ask it to assist me with this task...
+I have never used ChatGPT before this, so I was keen to see its capabilities first-hand. I decided to jump straight into it and ask it to assist me with this task...
 
 
 #### Prompt
@@ -106,27 +99,7 @@ When trying to access a website I get the error message: {"error":"missing autho
 ```
 
 #### Response
-```
-The error message "missing authorization header" indicates that the server is expecting the client (you) to include an authorization header in the request to access the website.
-
-To get around this, you'll need to include the necessary authorization information in the header of the request you're sending to the server. The exact format of the header and the information it should contain depends on the authorization mechanism used by the server.
-
-If the server is using Basic authentication, the header should contain the word "Basic" followed by a base64-encoded string of the username and password separated by a colon.
-
-If the server is using token-based authentication, the header should contain the word "Bearer" followed by the token.
-
-Here's an example of how you could include an authorization header in a curl request:
-```
-```bash
-curl -H "Authorization: Bearer <token>" https://example.com
-```
-```
-You'll need to replace `<token>` with the actual token you have received from the server.
-
-If you're using a different programming language or tool, the specific method for including the authorization header in your request will vary, but the basic concept will be the same.
-```
-
-Unfortunately this did not work either. Again, in retrospect, more specificity (i.e. what tools & languages) would have been a good start.
+Unfortunately, this did not work either. Again, in retrospect, more specificity (i.e. what tools & languages) would have been a good start.
 
 ____
 
@@ -136,21 +109,7 @@ How can I see the authorization token on a website I am visiting
 ```
 
 #### Response
-```
-You can view the authorization token for a website you're visiting in the developer tools of your web browser. Here's how you can do this in Google Chrome:
-
-1.  Right-click on the page and select "Inspect"
-2.  In the developer tools window that opens, switch to the "Network" tab
-3.  Refresh the page you're visiting
-4.  Look for the API request you're interested in, and click on it to view its details
-5.  Switch to the "Headers" tab, and look for the "Authorization" header
-
-Note that some websites may encode the token, and it may not be immediately readable in its raw form. Additionally, not all websites will include the authorization token in the request header, as it may be stored elsewhere or passed as part of the URL or as a cookie.
-
-Keep in mind that viewing the authorization token of someone else's website is not ethical, and may also be illegal, so use this information responsibly.
-```
-
-To my surpise, this worked exactly how I wanted it to. I was able to see the field `x-authorization` with no issues.
+To my surprise, this worked exactly how I wanted it to. I was able to see the field `x-authorization` with no issues.
 
 This was my first little 'win' with ChatGPT.
 
@@ -162,11 +121,11 @@ Headers:
 x-authorization: d42cdd6-6592-448d-a2ca-c315808c2960
 ```
 
-This appears to be submitted to the API - as some sort of form of authentication. My guess is that the browser stores this info, and then attaches it to the HTTPS request (in the header), and that allows the browser to load the queried data from this API.
+This appears to be submitted to the API - as some sort of form of authentication. I'm speculating that the browser stores this info, and then will get attached to the HTTPS request (in the header), and that allows the browser to load the queried data from this API.
 
-I needed an easy way to query this. I was still having issue with curl unfortunately.
+I needed an easy way to query this. I was still having issues with curl, unfortunately.
 
-One of my coworkers recommended that I use PostMan for testing this. It actually worked really well - I just plugged in the following values:
+One of my coworkers recommended that I use PostMan for testing this. It worked really well - I just plugged in the following values:
 ```
 https://api-prod.grip.events/1/container/5062/search?search=&sort=name&order=asc&type_id=5716,5718,5714,5717&page=10
 
@@ -252,7 +211,7 @@ The response received is below:
 
 Great. So now we can request data from this API whilst not even being on the site. This was a major turning point in this little exercise. Querying this API via postman to get page after page of JSON would be faster than scrolling through the site, yet still quite slow...
 
-Lets see if ChatGPT can generate a script/command to automate this process...
+Let's see if ChatGPT can generate a script/command to automate this process...
 
 
 #### Prompt
@@ -270,7 +229,7 @@ curl -H "x-authorization: [value]" [API endpoint URL]
 Replace `[value]` with the actual value for the `x-authorization` header and `[API endpoint URL]` with the actual URL of the API endpoint you want to access.
 ```
 
-This seemed certain to worked. Unfortunately... this was not the case.
+This seemed certain to work. Unfortunately... this was not the case.
 
 ______
 
@@ -323,7 +282,7 @@ This python code is essentially the basis for the rest of the project.
 ________
 
 #### Prompt
-Write a python script to parse this json data: 
+Write a python script to parse this JSON data: 
 
 #### Response
 ```js 
@@ -395,7 +354,7 @@ if parsed_data['success']:
             ])
 ```
 
-The above code ends up running really slow. After a bit of refactoring, tweaking, troubleshooting, and further consulting with ChatGPT it became quite a bit faster.
+The above code ends up running quite slowly. After a bit of refactoring, tweaking, troubleshooting, and further consulting with ChatGPT it became quite a bit faster.
 
 ____
 ____

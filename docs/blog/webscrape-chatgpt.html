@@ -40,17 +40,17 @@
 
 <ol>
 <li>Tried to use more traditional web-scraping methods (e.g. Selenium etc.) --> realised this was an issue as the website required you to scroll to load more data on attendees (infinite scroll)</li>
-<li>Thought about using OpenCV to take screenshots and parse; did this is a previous project; however the scrolling issue stoppped me dead in my tracks</li>
+<li>Thought about using OpenCV to take screenshots and parse; I did this in a previous project; however, the scrolling issue stopped me dead in my tracks</li>
 </ol>
 
-<p>After enough googling/inspecting elements etc. figured out that the website was calling an API each time I scrolled down, and that's how more poeple were being loaded in.. About 20 per page. </p>
+<p>After enough googling/inspecting elements etc. figured out that the website was calling an API each time I scrolled down, and that's how more people were being loaded in... About 20 per page. </p>
 
-<p>As it turns out there were roughly 175 page. Doing a bit of basic maths we get:</p>
+<p>As it turns out there were roughly 175 pages. Doing a bit of basic maths we get:</p>
 
 <pre><code>175 * 20 = 3500
 </code></pre>
 
-<p>So all in all, there is about ~3,500 on this list alone. It would take tens, if not hundreds of hours to scroll through each page. and collect this info. What a waste of time that would be...</p>
+<p>So all in all, there are about ~3,500 on this list alone. It would take tens, if not hundreds of hours to scroll through each page. and collect this info. What a waste of time that would be...</p>
 
 <blockquote>
   <p>Never spend 6 minutes doing something by hand when you can spend 6 hours failing to automate it</p>
@@ -60,7 +60,7 @@
 
 <ul>
 <li>Go into inspect (on chrome)</li>
-<li>Network tab</li>
+<li>Network Tab</li>
 <li>Scroll down/click load more</li>
 <li>Click the second request:</li>
 </ul>
@@ -69,18 +69,8 @@
 </code></pre>
 
 <ul>
-<li>Look at the general headers:</li>
-</ul>
-
-<pre><code>Request URL: https://api-prod.grip.events/1/container/5062/search?search=&amp;sort=name&amp;order=asc&amp;type_id=5716,5718,5714,5717&amp;page=2
-Request Method: GET
-Status Code: 200 
-Remote Address: 54.73.94.200:443
-Referrer Policy: no-referrer-when-downgrade
-</code></pre>
-
-<ul>
-<li>Go into preview section:</li>
+<li>Look at the general headers:
+Go into the preview section:</li>
 </ul>
 
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="nx">success</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
@@ -108,7 +98,7 @@ Referrer Policy: no-referrer-when-downgrade
 
 <p>Perfect, we found what we were looking for! This is one request of many. </p>
 
-<p>I (naively) tried entering in this API url into my webrowser, only to be greeted with the message:</p>
+<p>I (naively) tried entering this API URL into my web browser, only to be greeted with the message:</p>
 
 <div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="o">:</span><span class="s2">&quot;missing authorization header&quot;</span><span class="p">}</span>
 </code></pre></div>
@@ -123,7 +113,7 @@ Referrer Policy: no-referrer-when-downgrade
 
 <h2>ChatGPT</h2>
 
-<p>I've never used ChatGPT prior to this, so I was keen to see its capabilities first-hand. I decided to jump straight into it, and ask it to assist me with this task...</p>
+<p>I have never used ChatGPT before this, so I was keen to see its capabilities first-hand. I decided to jump straight into it and ask it to assist me with this task...</p>
 
 <h4>Prompt</h4>
 
@@ -152,26 +142,7 @@ Referrer Policy: no-referrer-when-downgrade
 
 <h4>Response</h4>
 
-<pre><code>The error message "missing authorization header" indicates that the server is expecting the client (you) to include an authorization header in the request to access the website.
-
-To get around this, you'll need to include the necessary authorization information in the header of the request you're sending to the server. The exact format of the header and the information it should contain depends on the authorization mechanism used by the server.
-
-If the server is using Basic authentication, the header should contain the word "Basic" followed by a base64-encoded string of the username and password separated by a colon.
-
-If the server is using token-based authentication, the header should contain the word "Bearer" followed by the token.
-
-Here's an example of how you could include an authorization header in a curl request:
-</code></pre>
-
-<div class="codehilite"><pre><span></span><code>curl<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer &lt;token&gt;&quot;</span><span class="w"> </span>https://example.com
-</code></pre></div>
-
-<pre><code>You'll need to replace `&lt;token&gt;` with the actual token you have received from the server.
-
-If you're using a different programming language or tool, the specific method for including the authorization header in your request will vary, but the basic concept will be the same.
-</code></pre>
-
-<p>Unfortunately this did not work either. Again, in retrospect, more specificity (i.e. what tools &amp; languages) would have been a good start.</p>
+<p>Unfortunately, this did not work either. Again, in retrospect, more specificity (i.e. what tools &amp; languages) would have been a good start.</p>
 
 <hr />
 
@@ -182,20 +153,7 @@ If you're using a different programming language or tool, the specific method fo
 
 <h4>Response</h4>
 
-<pre><code>You can view the authorization token for a website you're visiting in the developer tools of your web browser. Here's how you can do this in Google Chrome:
-
-1.  Right-click on the page and select "Inspect"
-2.  In the developer tools window that opens, switch to the "Network" tab
-3.  Refresh the page you're visiting
-4.  Look for the API request you're interested in, and click on it to view its details
-5.  Switch to the "Headers" tab, and look for the "Authorization" header
-
-Note that some websites may encode the token, and it may not be immediately readable in its raw form. Additionally, not all websites will include the authorization token in the request header, as it may be stored elsewhere or passed as part of the URL or as a cookie.
-
-Keep in mind that viewing the authorization token of someone else's website is not ethical, and may also be illegal, so use this information responsibly.
-</code></pre>
-
-<p>To my surpise, this worked exactly how I wanted it to. I was able to see the field <code>x-authorization</code> with no issues.</p>
+<p>To my surprise, this worked exactly how I wanted it to. I was able to see the field <code>x-authorization</code> with no issues.</p>
 
 <p>This was my first little 'win' with ChatGPT.</p>
 
@@ -205,11 +163,11 @@ Keep in mind that viewing the authorization token of someone else's website is n
 x-authorization: d42cdd6-6592-448d-a2ca-c315808c2960
 </code></pre>
 
-<p>This appears to be submitted to the API - as some sort of form of authentication. My guess is that the browser stores this info, and then attaches it to the HTTPS request (in the header), and that allows the browser to load the queried data from this API.</p>
+<p>This appears to be submitted to the API - as some sort of form of authentication. I'm speculating that the browser stores this info, and then will get attached to the HTTPS request (in the header), and that allows the browser to load the queried data from this API.</p>
 
-<p>I needed an easy way to query this. I was still having issue with curl unfortunately.</p>
+<p>I needed an easy way to query this. I was still having issues with curl, unfortunately.</p>
 
-<p>One of my coworkers recommended that I use PostMan for testing this. It actually worked really well - I just plugged in the following values:</p>
+<p>One of my coworkers recommended that I use PostMan for testing this. It worked really well - I just plugged in the following values:</p>
 
 <pre><code>https://api-prod.grip.events/1/container/5062/search?search=&amp;sort=name&amp;order=asc&amp;type_id=5716,5718,5714,5717&amp;page=10
 
@@ -295,7 +253,7 @@ x-authorization: ad42cdd6-6592-448d-a2ca-c315808c2960
 
 <p>Great. So now we can request data from this API whilst not even being on the site. This was a major turning point in this little exercise. Querying this API via postman to get page after page of JSON would be faster than scrolling through the site, yet still quite slow...</p>
 
-<p>Lets see if ChatGPT can generate a script/command to automate this process...</p>
+<p>Let's see if ChatGPT can generate a script/command to automate this process...</p>
 
 <h4>Prompt</h4>
 
@@ -313,7 +271,7 @@ x-authorization: ad42cdd6-6592-448d-a2ca-c315808c2960
 <pre><code>Replace `[value]` with the actual value for the `x-authorization` header and `[API endpoint URL]` with the actual URL of the API endpoint you want to access.
 </code></pre>
 
-<p>This seemed certain to worked. Unfortunately... this was not the case.</p>
+<p>This seemed certain to work. Unfortunately... this was not the case.</p>
 
 <hr />
 
@@ -367,7 +325,7 @@ Invoke-WebRequest<span class="w"> </span>-Uri<span class="w"> </span><span class
 
 <h4>Prompt</h4>
 
-<p>Write a python script to parse this json data: </p>
+<p>Write a python script to parse this JSON data: </p>
 
 <h4>Response</h4>
 
@@ -439,7 +397,7 @@ Invoke-WebRequest<span class="w"> </span>-Uri<span class="w"> </span><span class
             <span class="p">])</span>
 </code></pre></div>
 
-<p>The above code ends up running really slow. After a bit of refactoring, tweaking, troubleshooting, and further consulting with ChatGPT it became quite a bit faster.</p>
+<p>The above code ends up running quite slowly. After a bit of refactoring, tweaking, troubleshooting, and further consulting with ChatGPT it became quite a bit faster.</p>
 
 <hr />
 
