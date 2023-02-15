@@ -84,7 +84,7 @@ if __name__ == '__main__':
     # files = get_file_names(folder_to_read_from)
     # write_list_files_to_html(files, config, folder_to_read_from, folder_to_output_to)
     
-    name_of_file = 'first-blog'
+    name_of_file = 'webscrape-chatgpt'
     
     file_to_read = read_md_as_unicode(folder_to_read_from + name_of_file + '.MD')
     

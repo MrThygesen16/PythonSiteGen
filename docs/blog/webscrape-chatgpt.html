@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<html>
+    <head>
+        
+        <link rel="stylesheet" href="../style.css">
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="My article">
+        <meta name="author" content="Mike">
+        <link rel="icon" href="../../icon.png">
+      
+    </head>
+
+    <body>
+
+        <div class="content"> 
+            <hr>
+
+            <ul class="nav">
+                <li> <a href="../../index.html">Home</a> </li>
+                <li> <a href="../about.html">About</a> </li>
+                <li><a class="active" href="../blog.html">Blog</a></li>
+                <li><a href="../projects.html">Projects</a></li>
+              </ul>
+    
+            <hr>
+    
+            <!-- <div> <h1>  </h1>  </div> -->
+    
+            <!-- <hr> -->
+
+            <div class="text"> <h1>Using Python &amp; ChatGPT to webscrape</h1>
+
+<hr />
+
+<h2>First Attempt(s)</h2>
+
+<ol>
+<li>Tried to use more traditional web-scraping methods (e.g. Selenium etc.) --> realised this was an issue as the website required you to scroll to load more data on attendees (infinite scroll)</li>
+<li>Thought about using OpenCV to take screenshots and parse; did this is a previous project; however the scrolling issue stoppped me dead in my tracks</li>
+</ol>
+
+<p>After enough googling/inspecting elements etc. figured out that the website was calling an API each time I scrolled down, and that's how more poeple were being loaded in.. About 20 per page. </p>
+
+<p>As it turns out there were roughly 175 page. Doing a bit of basic maths we get:</p>
+
+<pre><code>175 * 20 = 3500
+</code></pre>
+
+<p>So all in all, there is about ~3,500 on this list alone. It would take tens, if not hundreds of hours to scroll through each page. and collect this info. What a waste of time that would be...</p>
+
+<blockquote>
+  <p>Never spend 6 minutes doing something by hand when you can spend 6 hours failing to automate it</p>
+</blockquote>
+
+<h3>Steps:</h3>
+
+<ul>
+<li>Go into inspect (on chrome)</li>
+<li>Network tab</li>
+<li>Scroll down/click load more</li>
+<li>Click the second request:</li>
+</ul>
+
+<pre><code>https://api-prod.grip.events/1/container/5062/search?search=&amp;sort=name&amp;order=asc&amp;type_id=5716,5718,5714,5717&amp;page=2
+</code></pre>
+
+<ul>
+<li>Look at the general headers:</li>
+</ul>
+
+<pre><code>Request URL: https://api-prod.grip.events/1/container/5062/search?search=&amp;sort=name&amp;order=asc&amp;type_id=5716,5718,5714,5717&amp;page=2
+Request Method: GET
+Status Code: 200 
+Remote Address: 54.73.94.200:443
+Referrer Policy: no-referrer-when-downgrade
+</code></pre>
+
+<ul>
+<li>Go into preview section:</li>
+</ul>
+
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="nx">success</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="nx">data</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="mf">7311283</span><span class="p">,</span><span class="w"> </span><span class="nx">application_id</span><span class="o">:</span><span class="w"> </span><span class="mf">743</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Abbi Failla&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">first_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Abbi&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">last_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Failla&quot;</span><span class="p">,},</span>
+<span class="w">    </span><span class="p">{</span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="mf">7351156</span><span class="p">,</span><span class="w"> </span><span class="nx">application_id</span><span class="o">:</span><span class="w"> </span><span class="mf">743</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Abby DuLac &quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">first_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Abby &quot;</span><span class="p">,},</span>
+<span class="w">    </span><span class="p">{</span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="mf">7381669</span><span class="p">,</span><span class="w"> </span><span class="nx">application_id</span><span class="o">:</span><span class="w"> </span><span class="mf">743</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Abby Rogers&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">first_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Abby&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">last_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Rogers&quot;</span><span class="p">,},</span>
+<span class="w">    </span><span class="p">{</span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="mf">7311328</span><span class="p">,</span><span class="w"> </span><span class="nx">application_id</span><span class="o">:</span><span class="w"> </span><span class="mf">743</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Abdo Bridi&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">first_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Abdo&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">last_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Bridi&quot;</span><span class="p">,},</span>
+<span class="w">    </span><span class="p">{</span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="mf">7380088</span><span class="p">,</span><span class="w"> </span><span class="nx">application_id</span><span class="o">:</span><span class="w"> </span><span class="mf">743</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Abdul Bari Ahmadzai&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">first_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Abdul Bari&quot;</span><span class="p">,},</span>
+<span class="w">    </span><span class="p">{</span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="mf">6027759</span><span class="p">,</span><span class="w"> </span><span class="nx">application_id</span><span class="o">:</span><span class="w"> </span><span class="mf">743</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Abhijit Ganguly&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">first_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Abhijit &quot;</span><span class="p">,},</span>
+<span class="w">    </span><span class="p">{</span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="mf">7322530</span><span class="p">,</span><span class="w"> </span><span class="nx">application_id</span><span class="o">:</span><span class="w"> </span><span class="mf">743</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Abhijit Joshi&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">first_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Abhijit&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">last_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Joshi&quot;</span><span class="p">,},</span>
+<span class="w">    </span><span class="p">{</span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="mf">7343896</span><span class="p">,</span><span class="w"> </span><span class="nx">application_id</span><span class="o">:</span><span class="w"> </span><span class="mf">743</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Abhinav Warrier&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">first_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Abhinav&quot;</span><span class="p">,},</span>
+<span class="w">    </span><span class="p">{</span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="mf">6027962</span><span class="p">,</span><span class="w"> </span><span class="nx">application_id</span><span class="o">:</span><span class="w"> </span><span class="mf">743</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Abhishek Katyal&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">first_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Abhishek &quot;</span><span class="p">,},</span>
+<span class="w">    </span><span class="p">{</span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="mf">7260973</span><span class="p">,</span><span class="w"> </span><span class="nx">application_id</span><span class="o">:</span><span class="w"> </span><span class="mf">743</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Abhishek Kapur&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">first_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Abhishek&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">last_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Kapur&quot;</span><span class="p">,},</span>
+<span class="w">    </span><span class="p">{</span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="mf">7262137</span><span class="p">,</span><span class="w"> </span><span class="nx">application_id</span><span class="o">:</span><span class="w"> </span><span class="mf">743</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Abraham Lin &quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">first_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Abraham &quot;</span><span class="p">,},</span>
+<span class="w">    </span><span class="p">{</span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="mf">7481091</span><span class="p">,</span><span class="w"> </span><span class="nx">application_id</span><span class="o">:</span><span class="w"> </span><span class="mf">743</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Abraham Adamour&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">first_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Abraham&quot;</span><span class="p">,},</span>
+<span class="w">    </span><span class="p">{</span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="mf">7337961</span><span class="p">,</span><span class="w"> </span><span class="nx">application_id</span><span class="o">:</span><span class="w"> </span><span class="mf">743</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Aby Lijtszain&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">first_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Aby&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">last_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Lijtszain&quot;</span><span class="p">,},</span>
+<span class="w">    </span><span class="p">{</span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="mf">6027741</span><span class="p">,</span><span class="w"> </span><span class="nx">application_id</span><span class="o">:</span><span class="w"> </span><span class="mf">743</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Adam Jeevunjee &quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">first_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Adam &quot;</span><span class="p">,},</span>
+<span class="w">    </span><span class="p">{</span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="mf">7347401</span><span class="p">,</span><span class="w"> </span><span class="nx">application_id</span><span class="o">:</span><span class="w"> </span><span class="mf">743</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Adam Jensen&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">first_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Adam &quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">last_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Jensen&quot;</span><span class="p">,},</span>
+<span class="w">    </span><span class="p">{</span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="mf">7423058</span><span class="p">,</span><span class="w"> </span><span class="nx">application_id</span><span class="o">:</span><span class="w"> </span><span class="mf">743</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Adam Gough &quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">first_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Adam &quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">last_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Gough &quot;</span><span class="p">,},</span>
+<span class="w">    </span><span class="p">{</span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="mf">7414089</span><span class="p">,</span><span class="w"> </span><span class="nx">application_id</span><span class="o">:</span><span class="w"> </span><span class="mf">743</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Adam Harrington &quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">first_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Adam &quot;</span><span class="p">,},</span>
+<span class="w">    </span><span class="p">{</span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="mf">7417349</span><span class="p">,</span><span class="w"> </span><span class="nx">application_id</span><span class="o">:</span><span class="w"> </span><span class="mf">743</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Adam Angell &quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">first_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Adam&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">last_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Angell &quot;</span><span class="p">,},</span>
+<span class="w">    </span><span class="p">{</span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="mf">7428706</span><span class="p">,</span><span class="w"> </span><span class="nx">application_id</span><span class="o">:</span><span class="w"> </span><span class="mf">743</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Adam Annen&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">first_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Adam&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">last_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Annen&quot;</span><span class="p">,},</span>
+<span class="w">    </span><span class="p">{</span><span class="nx">id</span><span class="o">:</span><span class="w"> </span><span class="mf">7415869</span><span class="p">,</span><span class="w"> </span><span class="nx">application_id</span><span class="o">:</span><span class="w"> </span><span class="mf">743</span><span class="p">,</span><span class="w"> </span><span class="nx">name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Adam Bryant&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">first_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Adam&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">last_name</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Bryant&quot;</span><span class="p">,}]</span>
+</code></pre></div>
+
+<p>Perfect, we found what we were looking for! This is one request of many. </p>
+
+<p>I (naively) tried entering in this API url into my webrowser, only to be greeted with the message:</p>
+
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="s2">&quot;error&quot;</span><span class="o">:</span><span class="s2">&quot;missing authorization header&quot;</span><span class="p">}</span>
+</code></pre></div>
+
+<p>Hmmm. Still no luck.</p>
+
+<p>I thought to myself, this would be a perfect time to try ChatGPT... Surely it might be of use?</p>
+
+<hr />
+
+<hr />
+
+<h2>ChatGPT</h2>
+
+<p>I've never used ChatGPT prior to this, so I was keen to see its capabilities first-hand. I decided to jump straight into it, and ask it to assist me with this task...</p>
+
+<h4>Prompt</h4>
+
+<pre><code>Write a powershell script to query and retrieve the data from this api: https://api-prod.grip.events/1/container/5062/search?search=&amp;sort=name&amp;order=asc&amp;type_id=5716,5718,5714,5717&amp;page=4
+</code></pre>
+
+<h4>Response</h4>
+
+<div class="codehilite"><pre><span></span><code><span class="nv">$url</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;https://api-prod.grip.events/1/container/5062/search?search=&amp;sort=name&amp;order=asc&amp;type_id=5716,5718,5714,5717&amp;page=4&quot;</span>
+<span class="nv">$response</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Invoke</span><span class="o">-</span><span class="n">RestMethod</span><span class="w"> </span><span class="o">-</span><span class="n">Uri</span><span class="w"> </span><span class="nv">$url</span>
+<span class="nv">$data</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">$response</span><span class="o">.</span><span class="n">data</span>
+
+<span class="k">foreach</span><span class="w"> </span><span class="p">(</span><span class="nv">$item</span><span class="w"> </span><span class="n">in</span><span class="w"> </span><span class="nv">$data</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">Write</span><span class="o">-</span><span class="n">Host</span><span class="w"> </span><span class="s">&quot;Name: $($item.name)&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>It gave me a script in what appears to be pearl (that's what the ChatGPT syntax highlighting said). I should have been a bit more specific.</p>
+
+<hr />
+
+<h4>Prompt</h4>
+
+<pre><code>When trying to access a website I get the error message: {"error":"missing authorization header"} what does this mean and how can I get around this?
+</code></pre>
+
+<h4>Response</h4>
+
+<pre><code>The error message "missing authorization header" indicates that the server is expecting the client (you) to include an authorization header in the request to access the website.
+
+To get around this, you'll need to include the necessary authorization information in the header of the request you're sending to the server. The exact format of the header and the information it should contain depends on the authorization mechanism used by the server.
+
+If the server is using Basic authentication, the header should contain the word "Basic" followed by a base64-encoded string of the username and password separated by a colon.
+
+If the server is using token-based authentication, the header should contain the word "Bearer" followed by the token.
+
+Here's an example of how you could include an authorization header in a curl request:
+</code></pre>
+
+<div class="codehilite"><pre><span></span><code>curl<span class="w"> </span>-H<span class="w"> </span><span class="s2">&quot;Authorization: Bearer &lt;token&gt;&quot;</span><span class="w"> </span>https://example.com
+</code></pre></div>
+
+<pre><code>You'll need to replace `&lt;token&gt;` with the actual token you have received from the server.
+
+If you're using a different programming language or tool, the specific method for including the authorization header in your request will vary, but the basic concept will be the same.
+</code></pre>
+
+<p>Unfortunately this did not work either. Again, in retrospect, more specificity (i.e. what tools &amp; languages) would have been a good start.</p>
+
+<hr />
+
+<h4>Prompt</h4>
+
+<pre><code>How can I see the authorization token on a website I am visiting
+</code></pre>
+
+<h4>Response</h4>
+
+<pre><code>You can view the authorization token for a website you're visiting in the developer tools of your web browser. Here's how you can do this in Google Chrome:
+
+1.  Right-click on the page and select "Inspect"
+2.  In the developer tools window that opens, switch to the "Network" tab
+3.  Refresh the page you're visiting
+4.  Look for the API request you're interested in, and click on it to view its details
+5.  Switch to the "Headers" tab, and look for the "Authorization" header
+
+Note that some websites may encode the token, and it may not be immediately readable in its raw form. Additionally, not all websites will include the authorization token in the request header, as it may be stored elsewhere or passed as part of the URL or as a cookie.
+
+Keep in mind that viewing the authorization token of someone else's website is not ethical, and may also be illegal, so use this information responsibly.
+</code></pre>
+
+<p>To my surpise, this worked exactly how I wanted it to. I was able to see the field <code>x-authorization</code> with no issues.</p>
+
+<p>This was my first little 'win' with ChatGPT.</p>
+
+<p>Below is what the <code>x-authorization</code> looks like:</p>
+
+<pre><code>Headers:
+x-authorization: d42cdd6-6592-448d-a2ca-c315808c2960
+</code></pre>
+
+<p>This appears to be submitted to the API - as some sort of form of authentication. My guess is that the browser stores this info, and then attaches it to the HTTPS request (in the header), and that allows the browser to load the queried data from this API.</p>
+
+<p>I needed an easy way to query this. I was still having issue with curl unfortunately.</p>
+
+<p>One of my coworkers recommended that I use PostMan for testing this. It actually worked really well - I just plugged in the following values:</p>
+
+<pre><code>https://api-prod.grip.events/1/container/5062/search?search=&amp;sort=name&amp;order=asc&amp;type_id=5716,5718,5714,5717&amp;page=10
+
+Headers:
+x-authorization: ad42cdd6-6592-448d-a2ca-c315808c2960
+</code></pre>
+
+<p>And to my surprise -- it worked.</p>
+
+<p>The response received is below:</p>
+
+<div class="codehilite"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="s2">&quot;success&quot;</span><span class="o">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">    </span><span class="s2">&quot;data&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="s2">&quot;id&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">7420542</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;application_id&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">743</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Amber Franklin&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;first_name&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Amber&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;last_name&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Franklin&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;headline&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Social Media at Media AF&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;summary&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot; &quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;job_title&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Social Media&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;company_name&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Media AF&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;job_industry&quot;</span><span class="o">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;location&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Chicago&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;location_code&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;en-gb&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;picture_url&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;https://events-cdn.grip.events/things-images/7e5623fb324698f4f438635571cf652a_1675293967.jpg&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;type_id&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">5714</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;type_category_id&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;type_key_translation&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Attendee&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;active&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;needs_activation&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">0</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;date_created&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">1674503422</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;can_meet&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">0</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;can_swipe&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">1</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;date_updated&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">1675294525</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;uri&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;/1/container/5062/thing/7420542&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;words&quot;</span><span class="o">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;last_joined_group_ids&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;container_id&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="mf">5062</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="s2">&quot;sessions_speaking&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">            </span><span class="s2">&quot;sessions_attending&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="mf">121659</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="s2">&quot;types&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="s2">&quot;container_id&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">5062</span><span class="p">,</span>
+<span class="w">                    </span><span class="s2">&quot;type_id&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">5714</span><span class="p">,</span>
+<span class="w">                    </span><span class="s2">&quot;can_meet&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="s2">&quot;can_swipe&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;true&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="s2">&quot;type_key_translation_en&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Attendee&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="s2">&quot;type_key_translation&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Attendee&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="s2">&quot;type_key_translation_en-gb&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Attendee&quot;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">],</span>
+<span class="w">            </span><span class="s2">&quot;promotion_locations&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">            </span><span class="s2">&quot;group_ids&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">            </span><span class="s2">&quot;groups&quot;</span><span class="o">:</span><span class="w"> </span><span class="p">[],</span>
+<span class="w">            </span><span class="s2">&quot;type_key_translation_en-gb&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Attendee&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;type_key_translation_en&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;Attendee&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;promoted&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">0</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;promotion_level&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;normal&quot;</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;default_meeting_location&quot;</span><span class="o">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;registration_id&quot;</span><span class="o">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;gps_lat&quot;</span><span class="o">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;gps_lng&quot;</span><span class="o">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;location_lat&quot;</span><span class="o">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;location_lng&quot;</span><span class="o">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;metadata&quot;</span><span class="o">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;categories&quot;</span><span class="o">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;did_answer_yes&quot;</span><span class="o">:</span><span class="w"> </span><span class="mf">0</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;swipe_message&quot;</span><span class="o">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;swipe_message_date_sent&quot;</span><span class="o">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">            </span><span class="s2">&quot;default_access&quot;</span><span class="o">:</span><span class="w"> </span><span class="s2">&quot;in_person&quot;</span>
+<span class="w">        </span><span class="p">},</span>
+<span class="w">        </span><span class="p">...</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Great. So now we can request data from this API whilst not even being on the site. This was a major turning point in this little exercise. Querying this API via postman to get page after page of JSON would be faster than scrolling through the site, yet still quite slow...</p>
+
+<p>Lets see if ChatGPT can generate a script/command to automate this process...</p>
+
+<h4>Prompt</h4>
+
+<pre><code>How to curl an api url with a parameter for `x-authorization`
+</code></pre>
+
+<h4>Response</h4>
+
+<pre><code>The curl command to access an API endpoint with a header parameter `x-authorization` would be:
+</code></pre>
+
+<div class="codehilite"><pre><span></span><code><span class="nt">curl</span><span class="w"> </span><span class="nt">-H</span><span class="w"> </span><span class="s2">&quot;x-authorization: [value]&quot;</span><span class="w"> </span><span class="o">[</span><span class="nt">API</span><span class="w"> </span><span class="nt">endpoint</span><span class="w"> </span><span class="nt">URL</span><span class="o">]</span>
+</code></pre></div>
+
+<pre><code>Replace `[value]` with the actual value for the `x-authorization` header and `[API endpoint URL]` with the actual URL of the API endpoint you want to access.
+</code></pre>
+
+<p>This seemed certain to worked. Unfortunately... this was not the case.</p>
+
+<hr />
+
+<h4>Prompt</h4>
+
+<pre><code>When running the code above I get the error: `Invoke-WebRequest : Cannot bind parameter 'Headers'. Cannot convert the "x-authorization:ad42cdd6-6592-448d-a2ca-c315808c2960" value of type "System.String" to type "System.Collections.IDictionary".` How can I fix this
+</code></pre>
+
+<h4>Response</h4>
+
+<pre><code>The error message is indicating that the `-Headers` parameter of the `Invoke-WebRequest` cmdlet in PowerShell requires a hashtable (dictionary) as its value, not a simple string. To correct the error, you can create a hashtable that contains your header key-value pair and pass that as the value of the `-Headers` parameter:
+</code></pre>
+
+<div class="codehilite"><pre><span></span><code><span class="nv">$headers</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>@<span class="o">{</span><span class="w"> </span><span class="s2">&quot;x-authorization&quot;</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;ad42cdd6-6592-448d-a2ca-c315808c2960&quot;</span><span class="w"> </span><span class="o">}</span>
+Invoke-WebRequest<span class="w"> </span>-Uri<span class="w"> </span><span class="o">[</span>API<span class="w"> </span>endpoint<span class="w"> </span>URL<span class="o">]</span><span class="w"> </span>-Method<span class="w"> </span>GET<span class="w"> </span>-Headers<span class="w"> </span><span class="nv">$headers</span>
+</code></pre></div>
+
+<pre><code>Replace `[API endpoint URL]` with the actual URL of the API endpoint you want to access.
+</code></pre>
+
+<p>This command ended up working perfectly. I could not describe how happy and impressed I was that I had even got this far. I definitely could have Googled this, but honestly, this is far more convenient.</p>
+
+<hr />
+
+<h4>Prompt</h4>
+
+<pre><code>How can I rewrite this script in python
+</code></pre>
+
+<h4>Response</h4>
+
+<pre><code>In Python, you can make a GET request to an API endpoint with a header using the `requests` library. Here's an example script to do that:
+</code></pre>
+
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">requests</span>
+
+<span class="n">url</span> <span class="o">=</span> <span class="s1">&#39;[API endpoint URL]&#39;</span>
+<span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x-authorization&#39;</span><span class="p">:</span> <span class="s1">&#39;ad42cdd6-6592-448d-a2ca-c315808c2960&#39;</span><span class="p">}</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</code></pre></div>
+
+<pre><code>Replace `[API endpoint URL]` with the actual URL of the API endpoint you want to access. The `requests.get` method sends a GET request to the specified URL, and the `headers` argument is used to pass the headers as a dictionary. The `response` object returned by the `requests.get` method contains the response content, which can be accessed using the `content` attribute. In the example above, the content is printed to the console.
+</code></pre>
+
+<p>This python code is essentially the basis for the rest of the project. </p>
+
+<hr />
+
+<h4>Prompt</h4>
+
+<p>Write a python script to parse this json data: </p>
+
+<h4>Response</h4>
+
+<div class="codehilite"><pre><span></span><code><span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="o">:</span><span class="kc">true</span><span class="p">,</span><span class="s2">&quot;data&quot;</span><span class="o">:</span><span class="p">[{</span><span class="s2">&quot;id&quot;</span><span class="o">:</span><span class="mf">7384201</span><span class="p">,</span><span class="s2">&quot;application_id&quot;</span><span class="o">:</span><span class="mf">743</span><span class="p">,</span><span class="s2">&quot;name&quot;</span><span class="o">:</span><span class="s2">&quot;Eran Pereg&quot;</span><span class="p">,</span><span class="s2">&quot;first_name&quot;</span><span class="o">:</span><span class="s2">&quot;Eran&quot;</span><span class="p">,</span><span class="s2">&quot;last_name&quot;</span><span class="o">:</span><span class="s2">&quot;Pereg&quot;</span><span class="p">,</span><span class="s2">&quot;headline&quot;</span><span class="o">:</span><span class="s2">&quot;CEO at Conbo.ai&quot;</span><span class="p">,</span><span class="s2">&quot;summary&quot;</span><span class="o">:</span><span class="s2">&quot;Eran is the CEO and co-founder of conbo.ai. \n\nConbo.ai leverages existing cameras to track, analyze and forecast vehicles and cargo locations within any terminal or logistic hub to streamline operations, increase predictability and deliver better customer service, all while providing sharper tools to meet SDG goals.\n\nEasy to adopt SaaS-based solution\nNo need for additional systems, such as \u000bLPR systems, GPS, OCR, or RFID&quot;</span><span class="p">,</span><span class="s2">&quot;job_title&quot;</span><span class="o">:</span><span class="s2">&quot;CEO&quot;</span><span class="p">,</span><span class="s2">&quot;company_name&quot;</span><span class="o">:</span><span class="s2">&quot;Conbo.ai&quot;</span><span class="p">,</span><span class="s2">&quot;job_industry&quot;</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span><span class="s2">&quot;location&quot;</span><span class="o">:</span><span class="s2">&quot;Israel&quot;</span><span class="p">,</span><span class="s2">&quot;location_code&quot;</span><span class="o">:</span><span class="s2">&quot;en-gb&quot;</span><span class="p">,</span><span class="s2">&quot;picture_url&quot;</span><span class="o">:</span><span class="s2">&quot;https://events-cdn.grip.events/things-images/fe8e8390fbd94ebad7d78cbc2adbfb13_1674207650.png&quot;</span><span class="p">,</span><span class="s2">&quot;type_id&quot;</span><span class="o">:</span><span class="mf">5714</span><span class="p">,</span><span class="s2">&quot;type_category_id&quot;</span><span class="o">:</span><span class="mf">1</span><span class="p">,</span><span class="s2">&quot;type_key_translation&quot;</span><span class="o">:</span><span class="s2">&quot;Attendee&quot;</span><span class="p">,</span><span class="s2">&quot;active&quot;</span><span class="o">:</span><span class="mf">1</span><span class="p">,</span><span class="s2">&quot;needs_activation&quot;</span><span class="o">:</span><span class="mf">0</span><span class="p">,</span><span class="s2">&quot;date_created&quot;</span><span class="o">:</span><span class="mf">1674039624</span><span class="p">,</span><span class="s2">&quot;can_meet&quot;</span><span class="o">:</span><span class="mf">1</span><span class="p">,</span><span class="s2">&quot;can_swipe&quot;</span><span class="o">:</span><span class="mf">1</span><span class="p">,</span><span class="s2">&quot;date_updated&quot;</span><span class="o">:</span><span class="mf">1674209445</span><span class="p">,</span><span class="s2">&quot;uri&quot;</span><span class="o">:</span><span class="s2">&quot;/1/container/5062/thing/7384201&quot;</span><span class="p">,</span><span class="s2">&quot;words&quot;</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span><span class="s2">&quot;last_joined_group_ids&quot;</span><span class="o">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;container_id&quot;</span><span class="o">:</span><span class="p">[</span><span class="mf">5062</span><span class="p">],</span><span class="s2">&quot;sessions_speaking&quot;</span><span class="o">:</span><span class="p">[],</span><span class="s2">&quot;sessions_attending&quot;</span><span class="o">:</span><span class="p">[</span><span class="mf">121613</span><span class="p">,</span><span class="mf">121610</span><span class="p">,</span><span class="mf">121601</span><span class="p">,</span><span class="mf">121612</span><span class="p">],</span><span class="s2">&quot;types&quot;</span><span class="o">:</span><span class="p">[{</span><span class="s2">&quot;container_id&quot;</span><span class="o">:</span><span class="mf">5062</span><span class="p">,</span><span class="s2">&quot;type_id&quot;</span><span class="o">:</span><span class="mf">5714</span><span class="p">,</span><span class="s2">&quot;can_meet&quot;</span><span class="o">:</span><span class="s2">&quot;true&quot;</span><span class="p">,</span><span class="s2">&quot;can_swipe&quot;</span><span class="o">:</span><span class="s2">&quot;true&quot;</span><span class="p">,</span><span class="s2">&quot;type_key_translation_en&quot;</span><span class="o">:</span><span class="s2">&quot;Attendee&quot;</span><span class="p">,</span><span class="s2">&quot;type_key_translation&quot;</span><span class="o">:</span><span class="s2">&quot;Attendee&quot;</span><span class="p">,</span><span class="s2">&quot;type_key_translation_en-gb&quot;</span><span class="o">:</span><span class="s2">&quot;Attendee&quot;</span><span class="p">}],</span><span class="s2">&quot;promotion_locations&quot;</span><span class="o">:</span><span class="p">[],</span><span class="s2">&quot;group_ids&quot;</span><span class="o">:</span><span class="p">[],</span><span class="s2">&quot;groups&quot;</span><span class="o">:</span><span class="p">[],</span><span class="s2">&quot;last_joined_group_ids_en-gb&quot;</span><span class="o">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;type_key_translation_en-gb&quot;</span><span class="o">:</span><span class="s2">&quot;Attendee&quot;</span><span class="p">,</span><span class="s2">&quot;type_key_translation_en&quot;</span><span class="o">:</span><span class="s2">&quot;Attendee&quot;</span><span class="p">,</span><span class="s2">&quot;promoted&quot;</span><span class="o">:</span><span class="mf">0</span><span class="p">,</span><span class="s2">&quot;promotion_level&quot;</span><span class="o">:</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span><span class="s2">&quot;default_meeting_location&quot;</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span><span class="s2">&quot;registration_id&quot;</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span><span class="s2">&quot;gps_lat&quot;</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span><span class="s2">&quot;gps_lng&quot;</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span><span class="s2">&quot;location_lat&quot;</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span><span class="s2">&quot;location_lng&quot;</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span><span class="s2">&quot;metadata&quot;</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span><span class="s2">&quot;categories&quot;</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span><span class="s2">&quot;did_answer_yes&quot;</span><span class="o">:</span><span class="mf">0</span><span class="p">,</span><span class="s2">&quot;swipe_message&quot;</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span><span class="s2">&quot;swipe_message_date_sent&quot;</span><span class="o">:</span><span class="kc">null</span><span class="p">,</span><span class="s2">&quot;default_access&quot;</span><span class="o">:</span><span class="s2">&quot;in_person&quot;</span><span class="p">}]}</span>
+</code></pre></div>
+
+<pre><code>Here is a Python script that parses the JSON data using the `json` library:
+</code></pre>
+
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">json</span>
+
+<span class="n">json_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;success&quot;</span><span class="p">:</span><span class="n">true</span><span class="p">,</span><span class="s2">&quot;data&quot;</span><span class="p">:[{</span><span class="s2">&quot;id&quot;</span><span class="p">:</span><span class="mi">7384201</span><span class="p">,</span><span class="s2">&quot;application_id&quot;</span><span class="p">:</span><span class="mi">743</span><span class="p">,</span><span class="s2">&quot;name&quot;</span><span class="p">:</span><span class="s2">&quot;Eran Pereg&quot;</span><span class="p">,</span><span class="s2">&quot;first_name&quot;</span><span class="p">:</span><span class="s2">&quot;Eran&quot;</span><span class="p">,</span><span class="s2">&quot;last_name&quot;</span><span class="p">:</span><span class="s2">&quot;Pereg&quot;</span><span class="p">,</span>
+<span class="s2">&quot;headline&quot;</span><span class="p">:</span><span class="s2">&quot;CEO at Conbo.ai&quot;</span><span class="p">,</span><span class="s2">&quot;summary&quot;</span><span class="p">:</span><span class="s2">&quot;Eran is the CEO and co-founder of conbo.ai. </span><span class="se">\n\n</span><span class="s2">Conbo.ai leverages existing cameras to track, analyze and forecast vehicles and cargo locations within any terminal or logistic hub to streamline operations, increase predictability and deliver better customer service, all while providing sharper tools to meet SDG goals.</span><span class="se">\n\n</span><span class="s2">Easy to adopt SaaS-based solution</span><span class="se">\n</span><span class="s2">No need for additional systems, such as </span><span class="se">\u000b</span><span class="s2">LPR systems, GPS, OCR, or RFID&quot;</span><span class="p">,</span><span class="s2">&quot;job_title&quot;</span><span class="p">:</span><span class="s2">&quot;CEO&quot;</span><span class="p">,</span><span class="s2">&quot;company_name&quot;</span><span class="p">:</span><span class="s2">&quot;Conbo.ai&quot;</span><span class="p">,</span><span class="s2">&quot;job_industry&quot;</span><span class="p">:</span><span class="n">null</span><span class="p">,</span><span class="s2">&quot;location&quot;</span><span class="p">:</span><span class="s2">&quot;Israel&quot;</span><span class="p">,</span><span class="s2">&quot;location_code&quot;</span><span class="p">:</span><span class="s2">&quot;en-gb&quot;</span><span class="p">,</span><span class="s2">&quot; picture_url&quot;</span><span class="p">:</span><span class="s2">&quot;https://events-cdn.grip.events/things-images/fe8e8390fbd94ebad7d78cbc2adbfb13_1674207650.png&quot;</span><span class="p">,</span><span class="s2">&quot;type_id&quot;</span><span class="p">:</span><span class="mi">5714</span><span class="p">,</span><span class="s2">&quot;type_category_id&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;type_key_translation&quot;</span><span class="p">:</span><span class="s2">&quot;Attendee&quot;</span><span class="p">,</span><span class="s2">&quot;active&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;needs_activation&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;date_created&quot;</span><span class="p">:</span><span class="mi">1674039624</span><span class="p">,</span><span class="s2">&quot;can_meet&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;can_swipe&quot;</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span><span class="s2">&quot;date_updated&quot;</span><span class="p">:</span><span class="mi">1674209445</span><span class="p">,</span><span class="s2">&quot;uri&quot;</span><span class="p">:</span><span class="s2">&quot;/1/container/5062/thing/7384201&quot;</span><span class="p">,</span><span class="s2">&quot;words&quot;</span><span class="p">:</span><span class="n">null</span><span class="p">,</span><span class="s2">&quot;last_joined_group_ids&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;container_id&quot;</span><span class="p">:[</span><span class="mi">5062</span><span class="p">],</span><span class="s2">&quot;sessions_speaking&quot;</span><span class="p">:[],</span><span class="s2">&quot;sessions_attending&quot;</span><span class="p">:[</span><span class="mi">121613</span><span class="p">,</span><span class="mi">121610</span><span class="p">,</span><span class="mi">121601</span><span class="p">,</span><span class="mi">121612</span><span class="p">],</span><span class="s2">&quot;types&quot;</span><span class="p">:[{</span><span class="s2">&quot;container_id&quot;</span><span class="p">:</span><span class="mi">5062</span><span class="p">,</span><span class="s2">&quot;type_id&quot;</span><span class="p">:</span><span class="mi">5714</span><span class="p">,</span><span class="s2">&quot;can_meet&quot;</span><span class="p">:</span><span class="s2">&quot;true&quot;</span><span class="p">,</span><span class="s2">&quot;can_swipe&quot;</span><span class="p">:</span><span class="s2">&quot;true&quot;</span><span class="p">,</span><span class="s2">&quot;type_key_translation_en&quot;</span><span class="p">:</span><span class="s2">&quot;Attendee&quot;</span><span class="p">,</span><span class="s2">&quot;type_key_translation&quot;</span><span class="p">:</span><span class="s2">&quot;Attendee&quot;</span><span class="p">,</span><span class="s2">&quot;type_key_translation_en-gb&quot;</span><span class="p">:</span><span class="s2">&quot;Attendee&quot;</span><span class="p">}],</span><span class="s2">&quot;promotion_locations&quot;</span><span class="p">:[],</span><span class="s2">&quot;group_ids&quot;</span><span class="p">:[],</span><span class="s2">&quot;groups&quot;</span><span class="p">:[],</span><span class="s2">&quot;last_joined_group_ids_en-gb&quot;</span><span class="p">:</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="s2">&quot;type_key_translation_en-gb&quot;</span><span class="p">:</span><span class="s2">&quot;Attendee&quot;</span><span class="p">,</span><span class="s2">&quot;type_key_translation_en&quot;</span><span class="p">:</span><span class="s2">&quot;Attendee&quot;</span><span class="p">,</span><span class="s2">&quot;promoted&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;promotion_level&quot;</span><span class="p">:</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span><span class="s2">&quot;default_meeting_location&quot;</span><span class="p">:</span><span class="n">null</span><span class="p">,</span><span class="s2">&quot;registration_id&quot;</span><span class="p">:</span><span class="n">null</span><span class="p">,</span><span class="s2">&quot;gps_lat&quot;</span><span class="p">:</span><span class="n">null</span><span class="p">,</span><span class="s2">&quot;gps_lng&quot;</span><span class="p">:</span><span class="n">null</span><span class="p">,</span><span class="s2">&quot;location_lat&quot;</span><span class="p">:</span><span class="n">null</span><span class="p">,</span><span class="s2">&quot;location_lng&quot;</span><span class="p">:</span><span class="n">null</span><span class="p">,</span><span class="s2">&quot;metadata&quot;</span><span class="p">:</span><span class="n">null</span><span class="p">,</span><span class="s2">&quot;categories&quot;</span><span class="p">:</span><span class="n">null</span><span class="p">,</span><span class="s2">&quot;did_answer_yes&quot;</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="s2">&quot;swipe_message&quot;</span><span class="p">:</span><span class="n">null</span><span class="p">,</span><span class="s2">&quot;swipe_message_date_sent&quot;</span><span class="p">:</span><span class="n">null</span><span class="p">,</span><span class="s2">&quot;default_access&quot;</span><span class="p">:</span><span class="s2">&quot;in_person&quot;</span><span class="p">}]}</span>
+
+<span class="n">parsed_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">json_data</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">parsed_data</span><span class="p">[</span><span class="s1">&#39;success&#39;</span><span class="p">]:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">parsed_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ID:&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Name:&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Headline:&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;headline&#39;</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Summary:&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;summary&#39;</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Job Title:&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;job_title&#39;</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Company Name:&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;company_name&#39;</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Location:&#39;</span><span class="p">,</span>
+</code></pre></div>
+
+<p>Good thing to note is that whilst this was super convenient - make sure to NEVER input personal data into ChatGPT...</p>
+
+<hr />
+
+<h4>Prompt</h4>
+
+<pre><code>rewrite the following code to write the data to a csv file, rather than print to console: parsed_data = json.loads(response) if parsed_data['success']: data = parsed_data['data'] for item in data: print("-----------------") print('ID:', item['id']) print('Name:', item['name']) print('Headline:', item['headline']) print('Summary:', item['summary']) print('Job Title:', item['job_title']) print('Company Name:', item['company_name']) print('Job Industry:', item['job_industry']) print('Location:', item['location'])
+</code></pre>
+
+<h4>Response</h4>
+
+<div class="codehilite"><pre><span></span><code><span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="n">parsed_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">parsed_data</span><span class="p">[</span><span class="s1">&#39;success&#39;</span><span class="p">]:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">parsed_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;data.csv&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span>
+            <span class="s1">&#39;ID&#39;</span><span class="p">,</span> 
+            <span class="s1">&#39;Name&#39;</span><span class="p">,</span> 
+            <span class="s1">&#39;Headline&#39;</span><span class="p">,</span> 
+            <span class="s1">&#39;Summary&#39;</span><span class="p">,</span> 
+            <span class="s1">&#39;Job Title&#39;</span><span class="p">,</span> 
+            <span class="s1">&#39;Company Name&#39;</span><span class="p">,</span> 
+            <span class="s1">&#39;Job Industry&#39;</span><span class="p">,</span> 
+            <span class="s1">&#39;Location&#39;</span>
+        <span class="p">])</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span>
+                <span class="n">item</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">],</span> 
+                <span class="n">item</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> 
+                <span class="n">item</span><span class="p">[</span><span class="s1">&#39;headline&#39;</span><span class="p">],</span> 
+                <span class="n">item</span><span class="p">[</span><span class="s1">&#39;summary&#39;</span><span class="p">],</span> 
+                <span class="n">item</span><span class="p">[</span><span class="s1">&#39;job_title&#39;</span><span class="p">],</span> 
+                <span class="n">item</span><span class="p">[</span><span class="s1">&#39;company_name&#39;</span><span class="p">],</span> 
+                <span class="n">item</span><span class="p">[</span><span class="s1">&#39;job_industry&#39;</span><span class="p">],</span> 
+                <span class="n">item</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">]</span>
+            <span class="p">])</span>
+</code></pre></div>
+
+<p>The above code ends up running really slow. After a bit of refactoring, tweaking, troubleshooting, and further consulting with ChatGPT it became quite a bit faster.</p>
+
+<hr />
+
+<hr />
+
+<h2>Final Python Script</h2>
+
+<p>Requirements</p>
+
+<pre><code>pip install requests
+</code></pre>
+
+<p>Below is the final Python script.</p>
+
+<div class="codehilite"><pre><span></span><code><span class="c1"># scrape.py</span>
+
+<span class="kn">import</span> <span class="nn">requests</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">import</span> <span class="nn">csv</span>
+
+
+<span class="k">def</span> <span class="nf">start</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># use to construct address for API</span>
+    <span class="n">base_url</span> <span class="o">=</span> <span class="s1">&#39;https://api-prod.grip.events/1/container/5062/search?search=&amp;sort=name&amp;order=asc&amp;type_id=5716,5718,5714,5717&amp;page=&#39;</span>
+
+    <span class="c1"># there is about 175 pages total</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">):</span>
+        <span class="c1"># API Destination to query</span>
+        <span class="n">url</span> <span class="o">=</span> <span class="n">base_url</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="c1"># authentication token for above API</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x-authorization&#39;</span><span class="p">:</span> <span class="s1">&#39;ad42cdd6-6592-448d-a2ca-c315808c2960&#39;</span><span class="p">}</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
+
+        <span class="c1"># get request, process, and parse into json</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+        <span class="n">parsed_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+        <span class="c1"># writing to csv file</span>
+        <span class="k">if</span> <span class="n">parsed_data</span><span class="p">[</span><span class="s1">&#39;success&#39;</span><span class="p">]:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">parsed_data</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;output.csv&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8-sig&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+                <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                    <span class="c1"># Display data as it&#39;s being written</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-----------------&quot;</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Name:&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">])</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Company Name:&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;company_name&#39;</span><span class="p">])</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Job Title:&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;job_title&#39;</span><span class="p">])</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Location:&#39;</span><span class="p">,</span> <span class="n">item</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">])</span>
+
+                    <span class="c1"># Sanitize and write data to csv file using the JSON keys</span>
+                    <span class="n">row</span> <span class="o">=</span> <span class="p">[</span>
+                        <span class="n">sanitize</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]),</span>
+                        <span class="n">sanitize</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;company_name&#39;</span><span class="p">]),</span>
+                        <span class="n">sanitize</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;job_title&#39;</span><span class="p">]),</span>
+                        <span class="n">sanitize</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">])</span>
+                    <span class="p">]</span>
+                    <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+<span class="c1"># function that handles corrupted strings/characters during fetch process</span>
+<span class="k">def</span> <span class="nf">sanitize</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">s</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="s1">&#39;ignore&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;utf-8-sig&#39;</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39; &#39;</span>
+    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">s</span> <span class="k">if</span> <span class="nb">ord</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">32</span><span class="p">)</span>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">start</span><span class="p">()</span>
+</code></pre></div>
+
+<h3>Result:</h3>
+
+<p>Below is a small sample of the 3000+ row Excel/CSV file (took a few minutes to run the script in full).</p>
+
+<pre><code>Aabhas Zaveri,Datamatics Robotics Software Inc.,"SVP, Intelligent Automation",Dallas Tx
+
+Aaron Clark,Updike Distribution Logistics,"Sr. Director, Logistics",
+
+Aaron Flack,Susquehanna Growth Equity,Partner,
+
+Aaron Lewis,Marlin Equity Partners,Vice President,
+
+Aaron Marx,Intralox,Global Industry Team Leader ,
+
+Aaron Matto,True Wind Capital,Partner,
+
+Aaron McCall,Flow Trans Inc,President,
+
+Aaron Meyerrenke,Procter &amp; Gamble,Private Fleet Purchases Manager,
+
+Aaron Neil,Battery Ventures,Investor,
+
+Aaron Nguyen,bp pulse fleet,Product Marketing Associate,
+
+Aaron Pierce,PerotJain,Partner,
+
+Aaron Taylor,Cubiscan,Marketing Manager,
+
+Aaron Weston,Lifeline Logistics,Co-Founder,
+
+Abbas  Azher,"Maritime Logistics, Inc.",CEO ,
+
+Abbi Failla,EASE Logistics,"VP, Business Operations",
+
+Abby  DuLac  ,PepsiCo,Warehouse Asset Mgr,
+
+Abby Rogers,Vector,Deployment Strategist,"Detroit, MI"
+
+Abdo Bridi,Anheuser-Busch InBev,Logistics Innovation Manager – Middle America Zone,
+
+Abdul Bari Ahmadzai,Continental Expedited Services,Director of Technology,
+
+Abhijit  Ganguly,Goodyear Ventures,Managing Director,
+</code></pre>
+ </div> 
+            
+        </div>
+
+    </body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<html>
+    <head>
+        
+        <link rel="stylesheet" href="../style.css">
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="My article">
+        <meta name="author" content="Mike">
+        <link rel="icon" href="../../icon.png">
+      
+    </head>
+
+    <body>
+
+        <div class="content"> 
+            <hr>
+
+            <ul class="nav">
+                <li> <a href="../../index.html">Home</a> </li>
+                <li> <a href="../about.html">About</a> </li>
+                <li><a class="active" href="../blog.html">Blog</a></li>
+                <li><a href="../projects.html">Projects</a></li>
+              </ul>
+    
+            <hr>
+    
+            <!-- <div> <h1>  </h1>  </div> -->
+    
+            <!-- <hr> -->
+
+            <div class="text"> <h1>Syntax Highlighting in Python</h1>
+
+<hr />
+
+<h2>Code to format</h2>
+
+<p>This blog is how to use Python to enable syntax highlighting in a markdown code snippet. The result is HTML/CSS that can be used and displayed on a site. In fact, this is the solution I'm using for this website. </p>
+
+<p>Take the code block below as an example. As of now there is no syntax highlighting. </p>
+
+<pre><code>if __name__ == '__main__':
+    print('hello world!')
+</code></pre>
+
+<h4>Requirements</h4>
+
+<pre><code>pip install markdown2
+pip install Pygments
+</code></pre>
+
+<p>After installing these two packages, we will create a python file named <code>test.py</code>.</p>
+
+<p>This snippet imports the markdown2 package, and uses it to convert the read md file (as a string), and write its contents as a HTML file.</p>
+
+<div class="codehilite"><pre><span></span><code><span class="c1"># test.py</span>
+
+<span class="kn">import</span> <span class="nn">markdown2</span>
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;test.md&quot;</span><span class="p">,</span><span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
+
+<span class="n">page</span> <span class="o">=</span>  <span class="n">markdown2</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">text</span><span class="p">,</span><span class="n">extras</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;fenced-code-blocks&#39;</span><span class="p">,</span> <span class="s1">&#39;code-friendly&#39;</span><span class="p">])</span> 
+
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;test.html&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">output_file</span><span class="p">:</span>
+        <span class="n">output_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">page</span><span class="p">)</span>
+</code></pre></div>
+
+<p>The result of this script can be seen below:</p>
+
+<div class="codehilite"><pre><span></span><code><span class="cm">&lt;!-- test.html --&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;codehilite&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">pre</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">code</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;k&quot;</span><span class="p">&gt;</span>if<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span> 
+            <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;vm&quot;</span><span class="p">&gt;</span>__name__<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span> 
+            <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;o&quot;</span><span class="p">&gt;</span>==<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+             <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;s1&quot;</span><span class="p">&gt;</span><span class="ni">&amp;#39;</span>__main__<span class="ni">&amp;#39;</span><span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+             <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;p&quot;</span><span class="p">&gt;</span>:<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;nb&quot;</span><span class="p">&gt;</span>print<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;p&quot;</span><span class="p">&gt;</span>(<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;s1&quot;</span><span class="p">&gt;</span><span class="ni">&amp;#39;</span>hello world!<span class="ni">&amp;#39;</span><span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;p&quot;</span><span class="p">&gt;</span>)<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">code</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">pre</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</code></pre></div>
+
+<p>However, when previewing this file in your browser, it will still appear to not have any syntax highlighting. This is due to a key component being missin - CSS. This is where the python module <code>pygmentize</code> comes into use.</p>
+
+<p>Open a terminal instance and enter the following commmand:</p>
+
+<div class="codehilite"><pre><span></span><code>pygmentize<span class="w"> </span>-S<span class="w"> </span>default<span class="w"> </span>-f<span class="w"> </span>html<span class="w"> </span>&gt;<span class="w"> </span>test.css
+</code></pre></div>
+
+<p>This will create a file called <code>test.css</code>. Some of its contents can be seen below (there's a lot of lines).</p>
+
+<div class="codehilite"><pre><span></span><code><span class="c">/* test.css */</span>
+
+<span class="nt">pre</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">line-height</span><span class="p">:</span><span class="w"> </span><span class="mi">125</span><span class="kt">%</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="nt">td</span><span class="p">.</span><span class="nc">linenos</span><span class="w"> </span><span class="p">.</span><span class="nc">normal</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="kc">inherit</span><span class="p">;</span><span class="w"> </span><span class="k">background-color</span><span class="p">:</span><span class="w"> </span><span class="mh">#eee</span><span class="p">;</span><span class="w"> </span><span class="k">padding-left</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span><span class="w"> </span><span class="k">padding-right</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="nt">span</span><span class="p">.</span><span class="nc">linenos</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="kc">inherit</span><span class="p">;</span><span class="w"> </span><span class="k">background-color</span><span class="p">:</span><span class="w"> </span><span class="kc">transparent</span><span class="p">;</span><span class="w"> </span><span class="k">padding-left</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span><span class="w"> </span><span class="k">padding-right</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="nt">td</span><span class="p">.</span><span class="nc">linenos</span><span class="w"> </span><span class="p">.</span><span class="nc">special</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="mh">#000000</span><span class="p">;</span><span class="w"> </span><span class="k">background-color</span><span class="p">:</span><span class="w"> </span><span class="mh">#ffffc0</span><span class="p">;</span><span class="w"> </span><span class="k">padding-left</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span><span class="w"> </span><span class="k">padding-right</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="nt">span</span><span class="p">.</span><span class="nc">linenos</span><span class="p">.</span><span class="nc">special</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="mh">#000000</span><span class="p">;</span><span class="w"> </span><span class="k">background-color</span><span class="p">:</span><span class="w"> </span><span class="mh">#ffffc0</span><span class="p">;</span><span class="w"> </span><span class="k">padding-left</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span><span class="w"> </span><span class="k">padding-right</span><span class="p">:</span><span class="w"> </span><span class="mi">5</span><span class="kt">px</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">.</span><span class="nc">hll</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">background-color</span><span class="p">:</span><span class="w"> </span><span class="mh">#ffffcc</span><span class="w"> </span><span class="p">}</span>
+<span class="p">.</span><span class="nc">c</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="mh">#3D7B7B</span><span class="p">;</span><span class="w"> </span><span class="k">font-style</span><span class="p">:</span><span class="w"> </span><span class="kc">italic</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="c">/* Comment */</span>
+<span class="p">.</span><span class="nc">err</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">border</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="kt">px</span><span class="w"> </span><span class="kc">solid</span><span class="w"> </span><span class="mh">#FF0000</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="c">/* Error */</span>
+<span class="p">.</span><span class="nc">k</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="mh">#008000</span><span class="p">;</span><span class="w"> </span><span class="k">font-weight</span><span class="p">:</span><span class="w"> </span><span class="kc">bold</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="c">/* Keyword */</span>
+<span class="p">.</span><span class="nc">o</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="mh">#666666</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="c">/* Operator */</span>
+<span class="p">.</span><span class="nc">ch</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">color</span><span class="p">:</span><span class="w"> </span><span class="mh">#3D7B7B</span><span class="p">;</span><span class="w"> </span><span class="k">font-style</span><span class="p">:</span><span class="w"> </span><span class="kc">italic</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="c">/* Comment.Hashbang */</span>
+<span class="c">/* </span>
+<span class="c">    etc.</span>
+<span class="c">*/</span>
+</code></pre></div>
+
+<p>Next, all we need to do is add this file <code>test.css</code> to our HTML file <code>test.html</code>.</p>
+
+<div class="codehilite"><pre><span></span><code><span class="cm">&lt;!-- test.html --&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">link</span> <span class="na">rel</span><span class="o">=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;test.css&quot;</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">div</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;codehilite&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">pre</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">span</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+        <span class="p">&lt;</span><span class="nt">code</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;k&quot;</span><span class="p">&gt;</span>if<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span> 
+            <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;vm&quot;</span><span class="p">&gt;</span>__name__<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span> 
+            <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;o&quot;</span><span class="p">&gt;</span>==<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+             <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;s1&quot;</span><span class="p">&gt;</span><span class="ni">&amp;#39;</span>__main__<span class="ni">&amp;#39;</span><span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+             <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;p&quot;</span><span class="p">&gt;</span>:<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;nb&quot;</span><span class="p">&gt;</span>print<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;p&quot;</span><span class="p">&gt;</span>(<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;s1&quot;</span><span class="p">&gt;</span><span class="ni">&amp;#39;</span>hello world!<span class="ni">&amp;#39;</span><span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+            <span class="p">&lt;</span><span class="nt">span</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;p&quot;</span><span class="p">&gt;</span>)<span class="p">&lt;/</span><span class="nt">span</span><span class="p">&gt;</span>
+        <span class="p">&lt;/</span><span class="nt">code</span><span class="p">&gt;</span>
+    <span class="p">&lt;/</span><span class="nt">pre</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</code></pre></div>
+
+<p>Now when we reload the HTML file, it should have syntax highlighting!</p>
+
+<div class="codehilite"><pre><span></span><code><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;hello world!&#39;</span><span class="p">)</span>
+</code></pre></div>
+ </div> 
+            
+        </div>
+
+    </body>
+</html>
