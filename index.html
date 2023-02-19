@@ -42,10 +42,28 @@
 
 <p>If you would like to learn more about me and my interests, please take a look at the About page.</p>
 
-<p>Quick disclaimer; I am not a webdev, nor am I a designer. The goal of the site is more function than form. I did try to make this website look at least a little presentable.</p>
- </div> 
-            
-        </div>
-
+    <div class="codehilite"><pre><span></span><code><span class="kd">public</span><span class="w"> </span><span class="kd">class</span> <span class="nc">Person</span><span class="p">{</span>
+    <span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
+    <span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">birth_year</span><span class="p">;</span>
+    <span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">gender</span><span class="p">;</span>
+    <span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">location</span><span class="p">;</span>
+    
+    <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">setInfo</span><span class="p">(){</span>
+    <span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Michael&quot;</span><span class="p">;</span>
+    <span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">birth_year</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1998</span><span class="p">;</span>
+    <span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">gender</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Male&quot;</span><span class="p">;</span>
+    <span class="w">        </span><span class="k">this</span><span class="p">.</span><span class="na">location</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;Australia&quot;</span><span class="p">;</span>
+    <span class="w">    </span><span class="p">}</span>
+    
+    <span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="n">String</span><span class="o">[]</span><span class="w"> </span><span class="n">args</span><span class="p">){</span>
+    
+    <span class="w">        </span><span class="n">Person</span><span class="w"> </span><span class="n">me</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Person</span><span class="p">();</span>
+    <span class="w">        </span><span class="n">me</span><span class="p">.</span><span class="na">setInfo</span><span class="p">();</span>
+    
+    <span class="w">        </span><span class="n">System</span><span class="p">.</span><span class="na">out</span><span class="p">.</span><span class="na">println</span><span class="p">(</span><span class="s">&quot;Hello my name is &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">me</span><span class="p">.</span><span class="na">name</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s">&quot;!&quot;</span><span class="p">);</span>
+    <span class="w">    </span><span class="p">}</span><span class="w">   </span>
+    <span class="p">}</span>
+    </code></pre></div>
+    
     </body>
 </html>
