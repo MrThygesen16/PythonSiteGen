@@ -99,8 +99,9 @@ When trying to access a website I get the error message: {"error":"missing autho
 ```
 
 #### Response
+```
 Unfortunately, this did not work either. Again, in retrospect, more specificity (i.e. what tools & languages) would have been a good start.
-
+```
 ____
 
 #### Prompt
