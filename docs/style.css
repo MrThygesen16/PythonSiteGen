@@ -1,29 +1,30 @@
 
 h1 {
     text-align: center;
-    color: black;
+    color: rgb(32, 194, 14)
 }
 
 body .text {
-    font-size: 1.25vw;
+    font-size: 20px;
     text-align: justify;
     text-justify: inter-word;
-
+    color: rgb(32, 194, 14)
 }
 
 body {
-    background-color: darkslategray;
+    background-color: black;
     width: 85vw;
     margin: 0vw auto;
-    border: 0.5vw solid #999;
-
+    /* border: 0.5vw solid #999; */
+    
     /* padding: 10px 10px; */
 }
 
 
 body .content {
-    background: white;
+    background: black;
     padding: 1vw 5vh;
+    font-family:"Source Code Pro",monospace;
 }
 
 
@@ -36,15 +37,21 @@ body .content {
     background-color: lightgray;
 } */
 
+hr {
+    border: 0;
+    border-bottom:1px dashed rgb(32, 194, 14);
+    background: black;
+}
+
 blockquote code {
     background-color: white;
 }
 
 
 blockquote {
-    color: darkslateblue;
+    color: lightgreen;
     font-style: italic;
-    border: 0.15vw dotted #999;
+    border: 0.15vw dotted rgb(32, 194, 14);
     padding: 1vw 2vw;
 }
 
@@ -63,16 +70,18 @@ pre code {
     display: block;
     padding: 1vw 1vw;
     overflow-wrap: break-word;
-    font-size: 0.85em;
+    font-size: 20px;
     color: black;
+    
   }
 
   
 code {
     background-color: #eee;
-    font-size: 0.85em;
-    color: red;
-    padding: 0.18vw 0.18vw;
+    font-size: 20px;
+    color: black;
+    padding: 0.15vw 0.15vw;
+    border: .12vw solid #999;
 }
 
 
@@ -81,20 +90,20 @@ ul.nav {
     padding:0;
     list-style:none;
     height:2vw; line-height:2vw;
-    background: darkgray; /* you can change the backgorund color here. */
-    font-family:Arial, Helvetica, sans-serif;
-    font-size:1.5vw;
+    background: black; /* you can change the backgorund color here. */
+    font-family:"Source Code Pro",monospace;
+    font-size:30px;
 }
 
 ul.nav li {
-    border-right:0.05vw solid black; /* you can change the border color matching to your background color */
+    border-right:0.05vw solid rgb(32, 194, 14); /* you can change the border color matching to your background color */
     float:left;
 }
 
 ul.nav a {
     display:block;
     padding:0vw 1vw;
-    color:white;
+    color: rgb(32, 194, 14);
     text-decoration:none;
 }
 
@@ -104,8 +113,8 @@ ul.nav li.current a {
 }
 
 li a.active {
-    color: white;
-    background:#086754;
+    color: black;
+    background: rgb(32, 194, 14);;
 }
 
 
@@ -123,11 +132,12 @@ ul.blog li:not(:last-child) {
 }
 
 ul.blog li {
-    border:0.1vw solid black;
+    border:0.1vw solid green;
     float:none;
     padding: 1vw 1vw;
     /* margin-bottom: -15px;   */
-    font-size: 1vw;
+    font-size: 15px;
+    color: rgb(32, 194, 14);
 }
 
 
@@ -135,15 +145,15 @@ ul.blog li {
 ul.blog a {
     display:block;
     padding:0vw 0vw;
-    color:black;
+    color: rgb(32, 194, 14);
     text-decoration:none;
-    font-size:1.5vw;
+    font-size:25px;
 }
 
 ul.blog a:hover,
 ul.blog li:hover {
     background:#086754;
-    color: white;
+    /* color: white; */
     
 }
 
